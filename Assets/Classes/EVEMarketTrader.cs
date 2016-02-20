@@ -53,6 +53,9 @@ namespace EVEMarketTrader {
     [System.Serializable]
     public class OrderEntry {
 
+        public double id;
+        public string id_str;
+
         public string volume_str;
         public bool buy;
         public string issued;
@@ -67,9 +70,7 @@ namespace EVEMarketTrader {
         public int duration;
         public string minVolume_str;
         public string volumeEntered_str;
-        public ItemType type;
-        public object id;
-        public string id_str;
+        public ItemType type;        
     }
 
     [System.Serializable]

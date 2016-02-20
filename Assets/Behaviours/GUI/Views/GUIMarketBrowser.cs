@@ -18,6 +18,8 @@ public enum PurchaseMode {
 /// </summary>
 public class GUIMarketBrowser : MonoBehaviour {
 
+    public GUIOrderInfo guiOrderInfo;
+
     public GameObject guiPrefab;
 
     public Dropdown regionDropdown;
@@ -41,6 +43,9 @@ public class GUIMarketBrowser : MonoBehaviour {
 
     private List<GUIOrderListEntry> _sellEntries = new List<GUIOrderListEntry>();
     private List<GUIOrderListEntry> _buyEntries = new List<GUIOrderListEntry>();
+
+    private OrderEntry _currentSellOrder;
+    private OrderEntry _currentBuyOrder;
 
     // Use this for early intialisation
     private void Awake() {
@@ -104,6 +109,8 @@ public class GUIMarketBrowser : MonoBehaviour {
             GUIOrderListEntry _entry = _obj.GetComponent<GUIOrderListEntry>();
             _sellEntries.Add(_entry);
 
+            _entry.orderData = _sellOrderList.items[i];
+
             _entry.text2.text = _sellOrderList.items[i].location.name;
             _entry.text3.text = _sellOrderList.items[i].price.ToString("F2");
             _entry.text4.text = _sellOrderList.items[i].minVolume.ToString("F0");
@@ -136,6 +143,8 @@ public class GUIMarketBrowser : MonoBehaviour {
 
             GUIOrderListEntry _entry = _obj.GetComponent<GUIOrderListEntry>();
             _buyEntries.Add(_entry);
+
+            _entry.orderData = _buyOrderList.items[i];
 
             _entry.text2.text = _buyOrderList.items[i].location.name;
             _entry.text3.text = _buyOrderList.items[i].price.ToString("F2");
@@ -237,11 +246,46 @@ public class GUIMarketBrowser : MonoBehaviour {
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="_order"></param>
+    /// <param name="_buy"></param>
+    public void SetInfo(ref OrderEntry _order, bool _buy) {
+
+        switch (_buy) {
+
+            case true: {
+
+                _currentBuyOrder = _order;
+
+                // Set the buy order info
+                guiOrderInfo.toInfo.text = _order.location.name;
+                break;
+            }
+
+            case false: {
+
+                _currentSellOrder = _order;
+
+                // Set the sell order info
+                guiOrderInfo.fromInfo.text = _order.location.name;
+                break;
+            }
+
+            default: {
+                break;
+            }
+        }
+
+
+        guiOrderInfo.UpdateMargins(ref _currentBuyOrder, ref _currentSellOrder);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="_issuedDate"></param>
     /// <param name="_duration"></param>
     /// <returns></returns>
-    private string CalculateExpirationDuration(string _issuedDate, int _duration)
-    {
+    private string CalculateExpirationDuration(string _issuedDate, int _duration) {
 
         DateTime _iDate = DateTime.Parse(_issuedDate);
         _iDate += TimeSpan.FromDays(_duration);
@@ -252,8 +296,7 @@ public class GUIMarketBrowser : MonoBehaviour {
         return FormatTimeSpan(_result, false);
     }
 
-    private static string FormatTimeSpan(TimeSpan span, bool showSign)
-    {
+    private static string FormatTimeSpan(TimeSpan span, bool showSign) {
         string sign = String.Empty;
         if (showSign && (span > TimeSpan.Zero))
             sign = "+";

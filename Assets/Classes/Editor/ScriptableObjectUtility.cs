@@ -32,7 +32,12 @@ public static class ScriptableObjectUtility {
     }
 
     [MenuItem("Assets/Create/AccessToken")]
-    public static void CreateAsset() {
+    public static void CreateAccessToken() {
         ScriptableObjectUtility.CreateAsset<AccessTokenData>();
+    }
+
+    [MenuItem("Assets/Create/ApplicationData")]
+    public static void CreateApplicationData() {
+        ScriptableObjectUtility.CreateAsset<ApplicationData>();
     }
 }

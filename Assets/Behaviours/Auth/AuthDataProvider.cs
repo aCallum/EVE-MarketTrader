@@ -14,15 +14,16 @@ public class AuthDataProvider : MonoBehaviour {
     public Text authKey;
     public Button requestButton;
 
+    public ApplicationData applicationData;
     public AccessTokenData accessTokenData;
 
-    private string _authURL = "https://login.eveonline.com/oauth/authorize/?response_type=code";
-    private string _redirect = "&redirect_uri=http://www.alastaircallum.com/w/eve-markettrader/auth.php";
-    private string _clientID = "&client_id=bd720d8fb60841b88e343b0546577431";
-    private string _scope = "&scope=characterFittingsRead characterFittingsWrite characterLocationRead characterNavigationWrite";
-    private string _state = "&state=state987654";
+    private string _authURL;
+    private string _redirect;
+    private string _clientID;
+    private string _scope;
+    private string _state;
 
-    private string _url;
+    private string _urlSOO;
 
     private WWW _www;
     private Dictionary<string, string> _headers = new Dictionary<string,string>();
@@ -31,7 +32,13 @@ public class AuthDataProvider : MonoBehaviour {
     // Use this for initialization
     private void Start() {
 
-        _headers.Add("Authorization", "Basic YmQ3MjBkOGZiNjA4NDFiODhlMzQzYjA1NDY1Nzc0MzE6SG1zRlgyY1E3aGNrNXUzM0lHeGNVdmV6a2JJOGYyUlU4aVcwUE0zcA==");
+        _authURL = applicationData.authorisationURL;
+        _redirect = "&redirect_uri=" + applicationData.redirectURI;
+        _clientID = "&client_id=" + applicationData.clientID;
+        _scope = "&scope=" + applicationData.scope;
+        _state = "&state=" + applicationData.state;
+
+        _headers.Add("Authorization", applicationData.authorisation);
         _headers.Add("Content-Type", "application/x-www-form-urlencoded");
         _headers.Add("Host", "login.eveonline.com");
     }
@@ -41,10 +48,8 @@ public class AuthDataProvider : MonoBehaviour {
     /// </summary>
     public void SignInWithEVEPressed() {
 
-        _url = _authURL + _redirect + _clientID + _scope + _state;
-
-        Application.OpenURL(_url);
-
+        _urlSOO = _authURL + _redirect + _clientID + _scope + _state;
+        Application.OpenURL(_urlSOO);
     }
 
     /// <summary>
