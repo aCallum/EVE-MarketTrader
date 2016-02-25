@@ -92,4 +92,96 @@ namespace EVEMarketTrader {
     }
 
     #endregion
+
+    #region MarketGroups
+
+    [System.Serializable]
+    public class ItemTypes {
+
+        public string href;
+    }
+
+    [System.Serializable]
+    public class ParentGroup {
+
+        public string href;
+    }
+
+    [System.Serializable]
+    public class Group {
+
+        public string name;
+        public string href;
+        public string id_str;
+        public int id;
+        public ItemTypes types;
+        public string description;
+        public ParentGroup parentGroup;
+    }
+
+    [System.Serializable]
+    public class MarketGroups {
+
+        public string totalCount_str;
+        public List<Group> items;
+        public int pageCount;
+        public string pageCount_str;
+        public int totalCount;
+    }
+
+    #endregion
+
+    #region Market
+
+    [System.Serializable]
+    public class MarketGroup {
+
+        public string href;
+        public int id;
+        public string id_str;
+    }
+
+    [System.Serializable]
+    public class Icon {
+
+        public string href;
+    }
+
+    [System.Serializable]
+    public class Type {
+
+        public string id_str;
+        public string href;
+        public int id;
+        public string name;
+        public Icon icon;
+    }
+
+    [System.Serializable]
+    public class Item {
+
+        public MarketGroup marketGroup;
+        public Type type;
+        public int id;
+        public string id_str;
+    }
+
+    [System.Serializable]
+    public class Next {
+
+        public string href;
+    }
+
+    [System.Serializable]
+    public class MarketGroupList {
+
+        public string totalCount_str;
+        public int pageCount;
+        public List<Item> items;
+        public Next next;
+        public int totalCount;
+        public string pageCount_str;
+    }
+
+    #endregion
 }
