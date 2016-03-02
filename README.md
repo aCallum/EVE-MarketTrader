@@ -13,9 +13,10 @@ Standalone Windows application. OSX planned.
 Created for [The EVE Online API Challenge].
 
 ### Version
-0.0.1 - public CREST data 
-0.0.3 - public CREST cached by ets. Less list-processing.
-0.0.5 - public CREST cached by ets. Less list-processing.
+  - 0.0.1 - public CREST data 
+  - 0.0.3 - public CREST cached by ets. Less list-processing.
+  - 0.0.5 - public CREST cached by ets. Less list-processing.
+  - 
 ### Release
 [v0.0.5].
 
