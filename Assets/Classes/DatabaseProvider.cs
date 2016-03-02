@@ -18,7 +18,7 @@ public static class DatabaseProvider {
     /// </summary>
     /// <param name="_query"></param>
     /// <returns></returns>
-    private static List<object> DBQuery(string _query) {
+    private static List<List<object>> DBQuery(string _query) {
 
         //string sqlQuery = "SELECT TYPEID FROM Types WHERE TYPENAME = '" + _value + "'";
 
@@ -32,12 +32,19 @@ public static class DatabaseProvider {
 
         _dbReader = _dbCommand.ExecuteReader();
 
-        List<object> _values = new List<object>();
+        List<List<object>> _values = new List<List<object>>();
 
-        //int _fieldCount = 
+        int _fieldCount = _dbReader.FieldCount;
 
         while (_dbReader.Read()) {
-            _values.Add(_dbReader.GetValue(0));
+
+            List<object> _fields = new List<object>();
+
+            for (int i = 0; i < _fieldCount; i++) {
+                _fields.Add(_dbReader.GetValue(i));
+            }
+
+            _values.Add(_fields);
         }
 
         DBDisconnect();
@@ -78,13 +85,13 @@ public static class DatabaseProvider {
     /// <returns></returns>
     public static List<UnityEngine.UI.Dropdown.OptionData> GetRegionNames() {
 
-        List<object> _values = DBQuery("SELECT REGIONNAME FROM Regions");
+        List<List<object>> _values = DBQuery("SELECT REGIONNAME FROM Regions");
 
         List<UnityEngine.UI.Dropdown.OptionData> _regionNames = new List<UnityEngine.UI.Dropdown.OptionData>();
 
         for (int i = 0; i < _values.Count; i++) {
             UnityEngine.UI.Dropdown.OptionData _data = new UnityEngine.UI.Dropdown.OptionData();
-            _data.text = _values[i].ToString();
+            _data.text = _values[i][0].ToString();
             _regionNames.Add(_data);
 		}
 
@@ -93,24 +100,47 @@ public static class DatabaseProvider {
 
     public static int GetItemID(string _itemName) {
 
-        List<object> _values = DBQuery("SELECT TYPEID FROM Types WHERE TYPENAME = '" + _itemName + "'");
+        List<List<object>> _values = DBQuery("SELECT TYPEID FROM Types WHERE TYPENAME = '" + _itemName + "'");
+
+        Debug.Log(_values.Count);
 
         if (_values.Count <= 0) {
+            Debug.Log("NONE FOUND");
             return -1;
         }
 
-        return Int32.Parse(_values[0].ToString());
+        return Int32.Parse(_values[0][0].ToString());
     }
 
     public static int GetRegionID(string _regionName) {
 
-        List<object> _values = DBQuery("SELECT REGIONID FROM Regions WHERE REGIONNAME = '" + _regionName + "'");
+        List<List<object>> _values = DBQuery("SELECT REGIONID FROM Regions WHERE REGIONNAME = '" + _regionName + "'");
 
         if (_values.Count <= 0) {
             return -1;
         }
 
-        return Int32.Parse(_values[0].ToString());
+        return Int32.Parse(_values[0][0].ToString());
     }
 
+    public static List<List<object>> GetRegions() {
+
+        List<List<object>> _values = DBQuery("SELECT * FROM Regions");
+
+        return _values;
+    }
+
+    public static List<List<object>> GetSolarSystems(string _constID) {
+
+        List<List<object>> _values = DBQuery("SELECT * FROM SolarSystems WHERE CONSTELLATIONID ='" + _constID + "'");
+
+        return _values;
+    }
+
+    public static List<List<object>> GetRegionIDFromSolarSystem(string _solarSystemName) {
+
+        List<List<object>> _values = DBQuery("SELECT REGIONID FROM SolarSystems WHERE SOLARSYSTEMNAME ='" + _solarSystemName + "'");
+
+        return _values;
+    }
 }

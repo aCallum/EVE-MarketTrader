@@ -52,6 +52,111 @@ namespace EVEMarketTrader {
         public int totalCount;
     }
 
+    [System.Serializable]
+    public class MarketBuyOrders {
+
+        public string href;
+    }
+
+    [System.Serializable]
+    public class ConstellationRef {
+
+        public string href;
+        public int id;
+        public string id_str;
+    }
+
+    [System.Serializable]
+    public class MarketSellOrders {
+
+        public string href;
+    }
+
+    [System.Serializable]
+    public class Region {
+
+        public string description;
+        public MarketBuyOrders marketBuyOrders;
+        public List<ConstellationRef> constellations;
+        public string name;
+        public string id_str;
+        public int id;
+        public MarketSellOrders marketSellOrders;
+    }
+
+    [System.Serializable]
+    public class Position {
+
+        public double y;
+        public double x;
+        public double z;
+    }
+
+    [System.Serializable]
+    public class RegionRef {
+
+        public string href;
+    }
+
+    [System.Serializable]
+    public class SolarSystemRef {
+
+        public string href;
+        public int id;
+        public string id_str;
+    }
+
+    [System.Serializable]
+    public class Constellation {
+
+        public Position position;
+        public RegionRef region;
+        public List<SolarSystemRef> systems;
+        public string name;
+    }
+
+    [System.Serializable]
+    public class Stats {
+
+        public string href;
+    }
+
+    [System.Serializable]
+    public class Planet {
+
+        public string href;
+    }
+
+    [System.Serializable]
+    public class SolarSystem {
+
+        public Stats stats;
+        public string name;
+        public double securityStatus;
+        public string securityClass;
+        public string href;
+        public string id_str;
+        public List<Planet> planets;
+        public Position position;
+        public ConstellationRef constellation;
+        public int id;
+    }
+
+    [System.Serializable]
+    public class SolarSystemLocation  {
+
+        public string id_str;
+        public string href;
+        public int id;
+        public string name;
+    }
+
+    [System.Serializable]
+    public class CharacterLocation {
+
+        public SolarSystemLocation solarSystem;
+    }
+
     #endregion
 
     #region Oders

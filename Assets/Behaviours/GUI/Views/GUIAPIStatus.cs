@@ -78,7 +78,9 @@ public class GUIAPIStatus : MonoBehaviour {
 
         CharBasic _charBasic = new CharBasic();
         _charBasic = JsonUtility.FromJson<CharBasic>(_www.text);
-        
+
+        PlayerPrefs.SetInt("character_id", _charBasic.CharacterID);
+
         if (_charBasic.CharacterName != null) {
             pilotName.text = _charBasic.CharacterName;
         }

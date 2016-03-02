@@ -14,4 +14,9 @@ public class AccessTokenData : ScriptableObject {
     public int expires_in;
     public string expire_time;
     public string refresh_token;
+
+    public bool IsValid() { 
+        
+        return (DateTime.Now < DateTime.Parse(expire_time)) ? true : false;
+    }
 }

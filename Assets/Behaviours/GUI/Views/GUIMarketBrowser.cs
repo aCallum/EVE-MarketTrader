@@ -114,14 +114,16 @@ public class GUIMarketBrowser : MonoBehaviour {
             GUIOrderListEntry _entry = _obj.GetComponent<GUIOrderListEntry>();
             _sellEntries.Add(_entry);
 
-            _entry.orderData = _sellOrderList.items[i];
+            //_entry.orderData = _sellOrderList.items[i];
 
-            _entry.text2.text = _sellOrderList.items[i].location.name;
-            _entry.text3.text = _sellOrderList.items[i].price.ToString("F2");
-            _entry.text4.text = _sellOrderList.items[i].minVolume.ToString("F0");
-            _entry.text5.text = _sellOrderList.items[i].volume.ToString("F0");
-            _entry.text6.text = CalculateExpirationDuration(_sellOrderList.items[i].issued, _sellOrderList.items[i].duration);
+            //_entry.text2.text = _sellOrderList.items[i].location.name;
+            //_entry.text3.text = _sellOrderList.items[i].price.ToString("F2");
+            //_entry.text4.text = _sellOrderList.items[i].minVolume.ToString("F0");
+            //_entry.text5.text = _sellOrderList.items[i].volume.ToString("F0");
+            //_entry.text6.text = CalculateExpirationDuration(_sellOrderList.items[i].issued, _sellOrderList.items[i].duration);
         }
+
+        SellFilterBy();
         
         /////////////
         
@@ -144,14 +146,16 @@ public class GUIMarketBrowser : MonoBehaviour {
             GUIOrderListEntry _entry = _obj.GetComponent<GUIOrderListEntry>();
             _buyEntries.Add(_entry);
 
-            _entry.orderData = _buyOrderList.items[i];
+            //_entry.orderData = _buyOrderList.items[i];
 
-            _entry.text2.text = _buyOrderList.items[i].location.name;
-            _entry.text3.text = _buyOrderList.items[i].price.ToString("F2");
-            _entry.text4.text = _buyOrderList.items[i].minVolume.ToString("F0");
-            _entry.text5.text = _buyOrderList.items[i].volume.ToString("F0");
-            _entry.text6.text = CalculateExpirationDuration(_buyOrderList.items[i].issued, _buyOrderList.items[i].duration);
+            //_entry.text2.text = _buyOrderList.items[i].location.name;
+            //_entry.text3.text = _buyOrderList.items[i].price.ToString("F2");
+            //_entry.text4.text = _buyOrderList.items[i].minVolume.ToString("F0");
+            //_entry.text5.text = _buyOrderList.items[i].volume.ToString("F0");
+            //_entry.text6.text = CalculateExpirationDuration(_buyOrderList.items[i].issued, _buyOrderList.items[i].duration);
         }
+
+        BuyFilterBy();
     }
 
     /// <summary>
@@ -167,11 +171,11 @@ public class GUIMarketBrowser : MonoBehaviour {
 
                 _sellEntries[i].orderData = _sellOrderList.items[i];
 
-                _sellEntries[i].text2.text = _sellOrderList.items[i].location.name;
-                _sellEntries[i].text3.text = _sellOrderList.items[i].price.ToString("F2");
-                _sellEntries[i].text4.text = _sellOrderList.items[i].minVolume.ToString("F0");
-                _sellEntries[i].text5.text = _sellOrderList.items[i].volume.ToString("F0");
-                _sellEntries[i].text6.text = CalculateExpirationDuration(_sellOrderList.items[i].issued, _sellOrderList.items[i].duration);
+                _sellEntries[i].text2.text = _sellEntries[i].orderData.location.name;
+                _sellEntries[i].text3.text = _sellEntries[i].orderData.price.ToString("F2");
+                _sellEntries[i].text4.text = _sellEntries[i].orderData.minVolume.ToString("F0");
+                _sellEntries[i].text5.text = _sellEntries[i].orderData.volume.ToString("F0");
+                _sellEntries[i].text6.text = CalculateExpirationDuration(_sellEntries[i].orderData.issued, _sellEntries[i].orderData.duration);
             }
         }
     }
@@ -189,11 +193,11 @@ public class GUIMarketBrowser : MonoBehaviour {
 
                 _buyEntries[i].orderData = _buyOrderList.items[i];
 
-                _buyEntries[i].text2.text = _buyOrderList.items[i].location.name;
-                _buyEntries[i].text3.text = _buyOrderList.items[i].price.ToString("F2");
-                _buyEntries[i].text4.text = _buyOrderList.items[i].minVolume.ToString("F0");
-                _buyEntries[i].text5.text = _buyOrderList.items[i].volume.ToString("F0");
-                _buyEntries[i].text6.text = CalculateExpirationDuration(_buyOrderList.items[i].issued, _buyOrderList.items[i].duration);
+                _buyEntries[i].text2.text = _buyEntries[i].orderData.location.name;
+                _buyEntries[i].text3.text = _buyEntries[i].orderData.price.ToString("F2");
+                _buyEntries[i].text4.text = _buyEntries[i].orderData.minVolume.ToString("F0");
+                _buyEntries[i].text5.text = _buyEntries[i].orderData.volume.ToString("F0");
+                _buyEntries[i].text6.text = CalculateExpirationDuration(_buyEntries[i].orderData.issued, _buyEntries[i].orderData.duration);
             }
         }
     }

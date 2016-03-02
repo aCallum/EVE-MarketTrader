@@ -128,9 +128,9 @@ public class GUIAuthProvider : MonoBehaviour {
         accessTokenData.refresh_token = _accessToken.refresh_token;
 
         // If we have not assigned a refresh token yet, do so now
-        if (PlayerPrefs.GetString("refresh_token") == null || PlayerPrefs.GetString("refresh_token") == "") {
-            PlayerPrefs.SetString("refresh_token", _accessToken.refresh_token);
-        }        
+        // if (PlayerPrefs.GetString("refresh_token") == null || PlayerPrefs.GetString("refresh_token") == "") {
+        PlayerPrefs.SetString("refresh_token", _accessToken.refresh_token);
+        //}        
         
         SceneManager.LoadScene("Main");
     }
