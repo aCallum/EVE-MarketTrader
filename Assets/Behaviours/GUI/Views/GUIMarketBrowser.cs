@@ -23,11 +23,15 @@ public class GUIMarketBrowser : MonoBehaviour {
 
     public GameObject guiPrefab;
 
-    public Dropdown regionDropdown;
+    public Dropdown regionDropdownA;
+    public Dropdown regionDropdownB;
+
     public InputField itemInputField;
 
     private int _itemID;
-    private int _regionID;
+    private int _regionIDA;
+    private int _regionIDB;
+
     private PurchaseMode _purchaseMode;
 
 	private string _buyURL = "https://public-crest.eveonline.com/market/10000002/orders/sell/?type=https://public-crest.eveonline.com/types/34/";
@@ -52,7 +56,9 @@ public class GUIMarketBrowser : MonoBehaviour {
     // Use this for early intialisation
     private void Awake() {
         
-        regionDropdown.options = new List<Dropdown.OptionData>(DatabaseProvider.GetRegionNames());
+        regionDropdownA.options = new List<Dropdown.OptionData>(DatabaseProvider.GetRegionNames());
+        regionDropdownB.options = new List<Dropdown.OptionData>(DatabaseProvider.GetRegionNames());
+
         UpdateRegionName(0);
     }
 
@@ -73,8 +79,8 @@ public class GUIMarketBrowser : MonoBehaviour {
     private IEnumerator PerformRequest() {
 
 
-        _buyURL = "https://public-crest.eveonline.com/market/" + _regionID + "/orders/" + (PurchaseMode.Buy).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
-        _sellURL = "https://public-crest.eveonline.com/market/" + _regionID + "/orders/" + (PurchaseMode.Sell).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
+        _buyURL = "https://public-crest.eveonline.com/market/" + _regionIDA + "/orders/" + (PurchaseMode.Buy).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
+        _sellURL = "https://public-crest.eveonline.com/market/" + _regionIDA + "/orders/" + (PurchaseMode.Sell).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
         
         for (int i = 0; i < _sellEntries.Count; i++) {
             Destroy(_sellEntries[i].gameObject);
@@ -116,11 +122,9 @@ public class GUIMarketBrowser : MonoBehaviour {
             _entry.text5.text = _sellOrderList.items[i].volume.ToString("F0");
             _entry.text6.text = CalculateExpirationDuration(_sellOrderList.items[i].issued, _sellOrderList.items[i].duration);
         }
-
-
+        
         /////////////
-
-
+        
         _wwwStream = new WWW(_buyURL);
 
         while (!_wwwStream.isDone) {
@@ -158,7 +162,6 @@ public class GUIMarketBrowser : MonoBehaviour {
         if (_sellOrderList.items.Count > 0) {
 
             _sellOrderList.items.Sort((a, b) => b.price.CompareTo(a.price));
-            //_sellOrderList.items.Reverse();
 
             for (int i = 0; i < _sellOrderList.totalCount; i++) {
 
@@ -222,9 +225,9 @@ public class GUIMarketBrowser : MonoBehaviour {
     /// <param name="_name"></param>
     public void UpdateRegionName(int _name) {
         
-        string _regionStr = regionDropdown.options[_name].text;
+        string _regionStr = regionDropdownA.options[_name].text;
         
-        _regionID = DatabaseProvider.GetRegionID(_regionStr);
+        _regionIDA = DatabaseProvider.GetRegionID(_regionStr);
 
         if (_itemID == -1) {
             return;
