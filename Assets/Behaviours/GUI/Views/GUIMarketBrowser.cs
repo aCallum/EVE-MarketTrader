@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Collections.Generic;
 
 using EVEMarketTrader;
@@ -23,6 +24,7 @@ public class GUIMarketBrowser : MonoBehaviour {
     public GameObject guiPrefab;
 
     public Dropdown regionDropdown;
+    public InputField itemInputField;
 
     private int _itemID;
     private int _regionID;
@@ -44,8 +46,8 @@ public class GUIMarketBrowser : MonoBehaviour {
     private List<GUIOrderListEntry> _sellEntries = new List<GUIOrderListEntry>();
     private List<GUIOrderListEntry> _buyEntries = new List<GUIOrderListEntry>();
 
-    private OrderEntry _currentSellOrder;
-    private OrderEntry _currentBuyOrder;
+    public OrderEntry currentSellOrder;
+    public OrderEntry currentBuyOrder;
 
     // Use this for early intialisation
     private void Awake() {
@@ -96,10 +98,7 @@ public class GUIMarketBrowser : MonoBehaviour {
 
         _sellOrderList = new OrderList();
         _sellOrderList = JsonUtility.FromJson<OrderList>(_wwwStream.text);
-        
-        //Debug.Log(_sellOrderList.totalCount + " orders found!");
-        //info.text = _sellOrderList.totalCount + " orders found.";
-        
+                
         for (int i = 0; i < _sellOrderList.totalCount; i++) {
 
             GameObject _obj = Instantiate(guiPrefab, Vector3.zero, Quaternion.identity) as GameObject;
@@ -131,10 +130,7 @@ public class GUIMarketBrowser : MonoBehaviour {
 
         _buyOrderList = new OrderList();
         _buyOrderList = JsonUtility.FromJson<OrderList>(_wwwStream.text);
-        
-        //Debug.Log(_sellOrderList.totalCount + " orders found!");
-        //info.text = _sellOrderList.totalCount + " orders found.";
-        
+                
         for (int i = 0; i < _buyOrderList.totalCount; i++) {
 
             GameObject _obj = Instantiate(guiPrefab, Vector3.zero, Quaternion.identity) as GameObject;
@@ -162,8 +158,11 @@ public class GUIMarketBrowser : MonoBehaviour {
         if (_sellOrderList.items.Count > 0) {
 
             _sellOrderList.items.Sort((a, b) => b.price.CompareTo(a.price));
-            
+            //_sellOrderList.items.Reverse();
+
             for (int i = 0; i < _sellOrderList.totalCount; i++) {
+
+                _sellEntries[i].orderData = _sellOrderList.items[i];
 
                 _sellEntries[i].text2.text = _sellOrderList.items[i].location.name;
                 _sellEntries[i].text3.text = _sellOrderList.items[i].price.ToString("F2");
@@ -182,8 +181,10 @@ public class GUIMarketBrowser : MonoBehaviour {
         if (_buyOrderList.items.Count > 0) {
 
             _buyOrderList.items.Sort((a, b) => a.price.CompareTo(b.price));
-            
+
             for (int i = 0; i < _buyOrderList.totalCount; i++) {
+
+                _buyEntries[i].orderData = _buyOrderList.items[i];
 
                 _buyEntries[i].text2.text = _buyOrderList.items[i].location.name;
                 _buyEntries[i].text3.text = _buyOrderList.items[i].price.ToString("F2");
@@ -199,10 +200,10 @@ public class GUIMarketBrowser : MonoBehaviour {
     /// </summary>
     /// <param name="_name"></param>
     public void UpdateItemName(string _name) {
-
-        Debug.Log("UpdateItemName()" + _name);
-        
-        string _itemNameStr = _name;
+                
+        TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+        string _itemNameStr = myTI.ToTitleCase(_name);
+        itemInputField.text = _itemNameStr;
 
         //_itemID = // cast from DB..
 
@@ -254,7 +255,7 @@ public class GUIMarketBrowser : MonoBehaviour {
 
             case true: {
 
-                _currentBuyOrder = _order;
+                currentBuyOrder = _order;
 
                 // Set the buy order info
                 guiOrderInfo.toInfo.text = _order.location.name;
@@ -263,7 +264,7 @@ public class GUIMarketBrowser : MonoBehaviour {
 
             case false: {
 
-                _currentSellOrder = _order;
+                currentSellOrder = _order;
 
                 // Set the sell order info
                 guiOrderInfo.fromInfo.text = _order.location.name;
@@ -276,7 +277,7 @@ public class GUIMarketBrowser : MonoBehaviour {
         }
 
 
-        guiOrderInfo.UpdateMargins(ref _currentBuyOrder, ref _currentSellOrder);
+        guiOrderInfo.UpdateMargins(ref currentBuyOrder, ref currentSellOrder);
     }
 
     /// <summary>
@@ -296,6 +297,12 @@ public class GUIMarketBrowser : MonoBehaviour {
         return FormatTimeSpan(_result, false);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="span"></param>
+    /// <param name="showSign"></param>
+    /// <returns></returns>
     private static string FormatTimeSpan(TimeSpan span, bool showSign) {
         string sign = String.Empty;
         if (showSign && (span > TimeSpan.Zero))

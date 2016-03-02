@@ -43,11 +43,9 @@ public class GUIOrderInfo : MonoBehaviour {
 
         int _X = int.Parse(desiredVolume.text);
         double _U = _sell.price;
+        double _buyValue = _X * _U;        
 
-        double _buyValue = _X * _U;
-        
-
-        double _buyCost = (((_buyValue)) + CalculateSalesTax(_buyValue));
+        double _buyCost = _buyValue;
 
 #endregion
 

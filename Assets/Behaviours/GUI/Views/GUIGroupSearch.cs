@@ -23,7 +23,7 @@ public class GUIGroupSearch : MonoBehaviour {
 	
         _www = new WWW("https://public-crest.eveonline.com/market/groups/");
 
-        StartCoroutine(DoRequest());
+        //StartCoroutine(DoRequest());
 	}
 	
 	// Update is called once per frame

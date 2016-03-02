@@ -17,6 +17,22 @@ namespace EVEMarketTrader {
 
     #endregion
 
+    #region CharacterBasic
+
+    [System.Serializable]
+    public class CharBasic {
+
+        public int CharacterID;
+        public string CharacterName;
+        public string ExpiresOn;
+        public string Scopes;
+        public string TokenType;
+        public string CharacterOwnerHash;
+        public string IntellectualProperty;        
+    }
+
+    #endregion
+
     #region Regions
 
     [System.Serializable]
