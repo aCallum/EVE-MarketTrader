@@ -1,6 +1,8 @@
 # EVE-MarketTrader
 Entry for The EVE Online API Challenge
 
+![My image](aCallum.github.com/EVE-MarketTrader/Assets/Sprites/Logo/EveTrader_Logo_120.png)
+
 EVE-MarketTrader is a standalone application that allows players of EVE Online the ability to search and filter market orders to find highly profitable trades. MarketTrader is prototyped in Unity and makes use of:
 
   - Unity uGUI
