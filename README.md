@@ -14,11 +14,11 @@ Created for [The EVE Online API Challenge].
 
 ### Version
   - 0.0.1 - public CREST data 
-  - 0.0.3 - public CREST cached by ets. Less list-processing.
-  - 0.0.5 - public CREST cached by ets. Less list-processing.
+  - 0.0.3 - market filtering
+  - 0.0.5 - authed CREST data
+  - 0.1.0 - regions/solar systems
 
 ### Release
-[v0.0.5].
 
 ### Structure
 Written as a non-game application.
@@ -43,7 +43,7 @@ Nope.
 ### Todos
 
  - Add inter-regional trade browsing
- - Complete route planner
+ - Add route to route planner
  - Implement group search
  - OSx build
 
