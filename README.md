@@ -1,7 +1,15 @@
 # EVE-MarketTrader
 Entry for The EVE Online API Challenge
 
-EVE-MarketTrader is a standalone application that allows players of EVE Online the ability to search and filter market orders to find highly profitable trades. MarketTrader is prototyped in Unity and makes use of:
+EVE-MarketTrader is a standalone application that helps players of EVE Online make use of inter region trade routes. The desired waypoint route can then be sent directly to the client for directions to the buy/sell locations. Currently supported feartures:
+
+  - Bi-region market scanning
+  - Buy/Sell location Waypoint plotting (CREST API currently only supports solar systems, MarketTrader will work best when stations can be set using this endpoint)
+  - Item name search
+  - Favourite item list search
+  
+
+MarketTrader is prototyped in Unity (why? because that's what I know) and makes use of:
 
   - Unity uGUI
   - SQLite
@@ -11,6 +19,17 @@ EVE-MarketTrader is a standalone application that allows players of EVE Online t
 
 Standalone Windows application. OSX planned.
 Created for [The EVE Online API Challenge].
+
+### Authenticated CREST Usage
+
+ - **characterLocationRead**
+ - **characterNavigationWrite** - Currently only supports setting the Solar System. MarketTrader will work best when stations can be set with this endpoint.
+
+### Public CREST 
+
+ - **market**
+ - **solarsystems**
+ - **regions**
 
 ### Version
   - 0.0.1 - public CREST data 
@@ -30,22 +49,14 @@ Written as a non-game application.
 ### Documentation
 Nope.
 
-### Authenticated CREST Usage
-
- - **characterLocationRead**
- - **characterNavigationWrite**
-
-### Public CREST 
-
- - **market**
- - **solarsystems**
-
 ### Todos
 
  - Add inter-regional trade browsing
  - Add route to route planner
- - Implement group search
+ - Implement favourite item search
  - OSx build
+ - Market history graphs (limited by MIT license for desired software for this)
+ - Market prediction graphs (limited by MIT license for desired software for this)
 
 License
 ----
