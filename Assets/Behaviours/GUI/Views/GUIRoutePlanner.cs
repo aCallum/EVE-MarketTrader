@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -34,7 +35,7 @@ public class GUIRoutePlanner : MonoBehaviour {
 
             Debug.Log("Token valid");
 
-            //StartCoroutine(DoRequestCharacterLocation());
+            StartCoroutine(DoRequestCharacterLocation());
 
         }
     }
@@ -62,7 +63,6 @@ public class GUIRoutePlanner : MonoBehaviour {
             _regionButton.regionName = _items[i][1].ToString();
             _regionButton.regionLabel.text = _items[i][1].ToString();
 
-            //StartCoroutine(DoRequestConstellations(_items[i][0].ToString()));
         }
 
 	}
@@ -89,6 +89,8 @@ public class GUIRoutePlanner : MonoBehaviour {
             foreach (Transform _transform in _solarSystemButtons) {
                 _transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
             }
+
+            UpdatePivot();
         }
 
         if (Input.GetAxis("Mouse ScrollWheel") < 0) {
@@ -106,10 +108,24 @@ public class GUIRoutePlanner : MonoBehaviour {
             if (_zoomTarget.localScale.x <= 0.5f) {
                 _zoomTarget.localScale = Vector3.one * 0.5f;
             }
+
+            UpdatePivot();
         } 
 
         
 	}
+
+    private void UpdatePivot() {
+
+        Debug.Log(((RectTransform)_zoomTarget).anchoredPosition);
+
+        //((RectTransform)_zoomTarget).pivot = new Vector2(Mathf.InverseLerp(0, 2500, _zoomTarget.position.x), Mathf.InverseLerp(0, 2500, _zoomTarget.position.y));
+
+    }
+
+    //public void UpdatePivot() { 
+    
+    //}
 
     public void RegionButtonPressed(string _id, bool _show) {     
 
@@ -143,7 +159,7 @@ public class GUIRoutePlanner : MonoBehaviour {
             List<List<object>> _items = new List<List<object>>();
             _items = DatabaseProvider.GetSolarSystems(_region.constellations[i].id_str);
 
-            _testColor = Color.HSVToRGB(Random.Range(0f, 1f), 1, 1);
+            _testColor = Color.HSVToRGB(UnityEngine.Random.Range(0f, 1f), 1, 1);
 
             for (int j = 0; j < _items.Count; j++) {
 
@@ -216,20 +232,28 @@ public class GUIRoutePlanner : MonoBehaviour {
         WWW _www = new WWW("https://crest-tq.eveonline.com/characters/" + PlayerPrefs.GetInt("character_id") + "/location/", null, _headers);
 
         while (!_www.isDone) {
-            Debug.Log("...");
             yield return null;
         }
-
-        Debug.Log(_www.text);
-
-        if (_www.text != "" || _www.text != "{}") {
+        
+        if (_www.text != "" && _www.text != "{}") {
 
             CharacterLocation _location = new CharacterLocation();
             _location = JsonUtility.FromJson<CharacterLocation>(_www.text);
 
-            int _regionID = (int)DatabaseProvider.GetRegionIDFromSolarSystem(_location.solarSystem.name)[0][0];
+            Debug.Log("Pilot is in: " + _location.solarSystem.name);
 
-            Debug.Log("Pilot is in: " + _regionID);
+            int _regionID = Int32.Parse(DatabaseProvider.GetRegionIDFromSolarSystem(_location.solarSystem.name)[0][0].ToString());
+            //string _regionName = DatabaseProvider.GetRegionFromSolarSystem(_location.solarSystem.name)[0][1].ToString();
+
+            //Debug.Log("Pilot is in: " + _regionID);
+
+            foreach (Transform _button in _regionButtons) {
+
+                if (_button.GetComponent<GUIRegionButton>().regionID == _regionID.ToString()) {
+
+                    _button.GetComponent<Image>().color = Color.cyan;
+                }
+            }
         }
     } 
 }

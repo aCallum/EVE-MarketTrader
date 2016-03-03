@@ -34,8 +34,11 @@ public class GUIMarketBrowser : MonoBehaviour {
 
     private PurchaseMode _purchaseMode;
 
-	private string _buyURL = "https://public-crest.eveonline.com/market/10000002/orders/sell/?type=https://public-crest.eveonline.com/types/34/";
-    private string _sellURL = "https://public-crest.eveonline.com/market/10000002/orders/sell/?type=https://public-crest.eveonline.com/types/34/";
+	private string _buyURLA = "";
+    private string _sellURLA = "";
+
+    private string _buyURLB = "";
+    private string _sellURLB = "";
     
     private WWW _wwwStream;
 
@@ -78,9 +81,8 @@ public class GUIMarketBrowser : MonoBehaviour {
     /// <returns></returns>
     private IEnumerator PerformRequest() {
 
-
-        _buyURL = "https://public-crest.eveonline.com/market/" + _regionIDA + "/orders/" + (PurchaseMode.Buy).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
-        _sellURL = "https://public-crest.eveonline.com/market/" + _regionIDA + "/orders/" + (PurchaseMode.Sell).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
+        _buyURLA = "https://public-crest.eveonline.com/market/" + _regionIDA + "/orders/" + (PurchaseMode.Buy).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
+        _sellURLA = "https://public-crest.eveonline.com/market/" + _regionIDA + "/orders/" + (PurchaseMode.Sell).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
         
         for (int i = 0; i < _sellEntries.Count; i++) {
             Destroy(_sellEntries[i].gameObject);
@@ -95,16 +97,17 @@ public class GUIMarketBrowser : MonoBehaviour {
         _sellEntries.Clear();
         _buyEntries.Clear();
 
-        _wwwStream = new WWW(_sellURL);
+        _wwwStream = new WWW(_sellURLA);
 
         while (!_wwwStream.isDone) {
-
             yield return null;
         }
 
+        // SELL ORDERS A
+
         _sellOrderList = new OrderList();
         _sellOrderList = JsonUtility.FromJson<OrderList>(_wwwStream.text);
-                
+
         for (int i = 0; i < _sellOrderList.totalCount; i++) {
 
             GameObject _obj = Instantiate(guiPrefab, Vector3.zero, Quaternion.identity) as GameObject;
@@ -113,21 +116,19 @@ public class GUIMarketBrowser : MonoBehaviour {
 
             GUIOrderListEntry _entry = _obj.GetComponent<GUIOrderListEntry>();
             _sellEntries.Add(_entry);
+        }
 
-            //_entry.orderData = _sellOrderList.items[i];
+        // Check if we have a second region to search
+        if (regionDropdownB.value != regionDropdownA.value) {
 
-            //_entry.text2.text = _sellOrderList.items[i].location.name;
-            //_entry.text3.text = _sellOrderList.items[i].price.ToString("F2");
-            //_entry.text4.text = _sellOrderList.items[i].minVolume.ToString("F0");
-            //_entry.text5.text = _sellOrderList.items[i].volume.ToString("F0");
-            //_entry.text6.text = CalculateExpirationDuration(_sellOrderList.items[i].issued, _sellOrderList.items[i].duration);
+            _sellURLB = "https://public-crest.eveonline.com/market/" + _regionIDB + "/orders/" + (PurchaseMode.Sell).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
         }
 
         SellFilterBy();
         
-        /////////////
+        // BUY ORDERS
         
-        _wwwStream = new WWW(_buyURL);
+        _wwwStream = new WWW(_buyURLA);
 
         while (!_wwwStream.isDone) {
 
@@ -145,14 +146,6 @@ public class GUIMarketBrowser : MonoBehaviour {
 
             GUIOrderListEntry _entry = _obj.GetComponent<GUIOrderListEntry>();
             _buyEntries.Add(_entry);
-
-            //_entry.orderData = _buyOrderList.items[i];
-
-            //_entry.text2.text = _buyOrderList.items[i].location.name;
-            //_entry.text3.text = _buyOrderList.items[i].price.ToString("F2");
-            //_entry.text4.text = _buyOrderList.items[i].minVolume.ToString("F0");
-            //_entry.text5.text = _buyOrderList.items[i].volume.ToString("F0");
-            //_entry.text6.text = CalculateExpirationDuration(_buyOrderList.items[i].issued, _buyOrderList.items[i].duration);
         }
 
         BuyFilterBy();
