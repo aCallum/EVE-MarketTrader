@@ -64,12 +64,14 @@ public class GUIRoutePlanner : MonoBehaviour {
             _obj.transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
             _obj.transform.SetParent(regionMapContent.transform, false);
             _regionButtons.Add(_obj.transform);
-
+            
             GUIRegionButton _regionButton = _obj.GetComponentInChildren<GUIRegionButton>();
             _regionButton.regionID = _items[i][0].ToString();
             _regionButton.regionName = _items[i][1].ToString();
             _regionButton.regionLabel.text = _items[i][1].ToString();
         }
+
+        SetDestinationLabels();
 	}
 	
 	// Update is called once per frame
@@ -275,10 +277,10 @@ public class GUIRoutePlanner : MonoBehaviour {
         buyLocation.text = guiMarketBrowser.currentSellOrder.location.name;
         sellLocation.text = guiMarketBrowser.currentBuyOrder.location.name;
 
-        guiNavigation.RoutePlannerButtonPressed();
-
         foreach (Transform _button in _regionButtons) {
 
+            _button.GetComponent<Image>().color = Color.white;
+            
             if (_button.GetComponent<GUIRegionButton>().regionName == guiMarketBrowser.regionDropdownA.options[guiMarketBrowser.regionDropdownA.value].text) {
 
                 _A = _button;
@@ -294,7 +296,7 @@ public class GUIRoutePlanner : MonoBehaviour {
 
         float _distance = Vector3.Distance(_B.position, _A.position);
         Debug.Log(_B.position);
-        testLine.rectTransform.sizeDelta = new Vector2(_distance * 2, 10);
+        testLine.rectTransform.sizeDelta = new Vector2(_distance * 1.9f, 10);
         testLine.rectTransform.position = (_A.position + _B.position) / 2;
         testLine.rectTransform.rotation = Quaternion.Euler(new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2((_A.position - _B.position).y, (_A.position - _B.position).x)));
 

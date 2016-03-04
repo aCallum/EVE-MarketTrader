@@ -167,7 +167,7 @@ public class GUIMarketBrowser : MonoBehaviour {
                 _sellEntries[i].orderData = _sellOrderList.items[i];
 
                 _sellEntries[i].text2.text = _sellEntries[i].orderData.location.name;
-                _sellEntries[i].text3.text = _sellEntries[i].orderData.price.ToString("F2");
+                _sellEntries[i].text3.text = _sellEntries[i].orderData.price.ToString("N");
                 _sellEntries[i].text4.text = _sellEntries[i].orderData.minVolume.ToString("F0");
                 _sellEntries[i].text5.text = _sellEntries[i].orderData.volume.ToString("F0");
                 _sellEntries[i].text6.text = CalculateExpirationDuration(_sellEntries[i].orderData.issued, _sellEntries[i].orderData.duration);
@@ -189,7 +189,7 @@ public class GUIMarketBrowser : MonoBehaviour {
                 _buyEntries[i].orderData = _buyOrderList.items[i];
 
                 _buyEntries[i].text2.text = _buyEntries[i].orderData.location.name;
-                _buyEntries[i].text3.text = _buyEntries[i].orderData.price.ToString("F2");
+                _buyEntries[i].text3.text = _buyEntries[i].orderData.price.ToString("N");
                 _buyEntries[i].text4.text = _buyEntries[i].orderData.minVolume.ToString("F0");
                 _buyEntries[i].text5.text = _buyEntries[i].orderData.volume.ToString("F0");
                 _buyEntries[i].text6.text = CalculateExpirationDuration(_buyEntries[i].orderData.issued, _buyEntries[i].orderData.duration);
