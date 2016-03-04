@@ -34,13 +34,10 @@ public class GUIMarketBrowser : MonoBehaviour {
 
     private PurchaseMode _purchaseMode;
 
-	private string _buyURLA = "";
-    private string _sellURLA = "";
-
-    private string _buyURLB = "";
-    private string _sellURLB = "";
+	private string _buyURL = "";
+    private string _sellURL = "";
     
-    private WWW _wwwStream;
+    //private WWW _wwwStream;
 
     public RectTransform sellOrderContent;
     public RectTransform buyOrderContent;
@@ -56,13 +53,16 @@ public class GUIMarketBrowser : MonoBehaviour {
     public OrderEntry currentSellOrder;
     public OrderEntry currentBuyOrder;
 
+    private int _purchaseVolume = 1;
+
     // Use this for early intialisation
     private void Awake() {
         
-        regionDropdownA.options = new List<Dropdown.OptionData>(DatabaseProvider.GetRegionNames());
-        regionDropdownB.options = new List<Dropdown.OptionData>(DatabaseProvider.GetRegionNames());
+        regionDropdownA.options = DatabaseProvider.GetRegionNames();
+        regionDropdownB.options = regionDropdownA.options;
 
-        UpdateRegionName(0);
+        UpdateBuyRegionName(1);
+        UpdateSellRegionName(1);
     }
 
 	// Use this for initialization
@@ -79,32 +79,23 @@ public class GUIMarketBrowser : MonoBehaviour {
     /// 
     /// </summary>
     /// <returns></returns>
-    private IEnumerator PerformRequest() {
+    private IEnumerator DoRequestSellOrders() {
 
-        _buyURLA = "https://public-crest.eveonline.com/market/" + _regionIDA + "/orders/" + (PurchaseMode.Buy).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
-        _sellURLA = "https://public-crest.eveonline.com/market/" + _regionIDA + "/orders/" + (PurchaseMode.Sell).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
-        
+        // SELL ORDERS
+
         for (int i = 0; i < _sellEntries.Count; i++) {
             Destroy(_sellEntries[i].gameObject);
         }
 
         _sellEntries.Clear();
 
-        for (int i = 0; i < _buyEntries.Count; i++) {
-            Destroy(_buyEntries[i].gameObject);
-        }
-
-        _sellEntries.Clear();
-        _buyEntries.Clear();
-
-        _wwwStream = new WWW(_sellURLA);
+        _sellURL = "https://public-crest.eveonline.com/market/" + _regionIDA + "/orders/" + (PurchaseMode.Sell).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
+        WWW _wwwStream = new WWW(_sellURL);
 
         while (!_wwwStream.isDone) {
             yield return null;
         }
-
-        // SELL ORDERS A
-
+        
         _sellOrderList = new OrderList();
         _sellOrderList = JsonUtility.FromJson<OrderList>(_wwwStream.text);
 
@@ -117,21 +108,28 @@ public class GUIMarketBrowser : MonoBehaviour {
             GUIOrderListEntry _entry = _obj.GetComponent<GUIOrderListEntry>();
             _sellEntries.Add(_entry);
         }
+        
+        SellFilterBy();
+    }
 
-        // Check if we have a second region to search
-        if (regionDropdownB.value != regionDropdownA.value) {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator DoRequestBuyOrders() {
 
-            _sellURLB = "https://public-crest.eveonline.com/market/" + _regionIDB + "/orders/" + (PurchaseMode.Sell).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";
+        // BUY ORDERS
+
+        for (int i = 0; i < _buyEntries.Count; i++) {
+            Destroy(_buyEntries[i].gameObject);
         }
 
-        SellFilterBy();
-        
-        // BUY ORDERS
-        
-        _wwwStream = new WWW(_buyURLA);
+        _buyEntries.Clear();
+
+        _buyURL = "https://public-crest.eveonline.com/market/" + _regionIDB + "/orders/" + (PurchaseMode.Buy).ToString().ToLower() + "/?type=https://public-crest.eveonline.com/types/" + _itemID + "/";        
+        WWW _wwwStream = new WWW(_buyURL);
 
         while (!_wwwStream.isDone) {
-
             yield return null;
         }
 
@@ -210,17 +208,36 @@ public class GUIMarketBrowser : MonoBehaviour {
         _itemID = DatabaseProvider.GetItemID(_itemNameStr);
 
         if (_itemID == -1) {
+            itemInputField.text = "<color=red>" + itemInputField.text + "</color>";
             return;
         }
 
-        StartCoroutine(PerformRequest());
+        StartCoroutine(DoRequestSellOrders());
+        StartCoroutine(DoRequestBuyOrders());
     }
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="_name"></param>
-    public void UpdateRegionName(int _name) {
+    public void UpdateBuyRegionName(int _name) {
+        
+        string _regionStr = regionDropdownB.options[_name].text;
+        
+        _regionIDB = DatabaseProvider.GetRegionID(_regionStr);
+
+        if (_itemID == -1) {
+            return;
+        }
+
+        StartCoroutine(DoRequestBuyOrders());
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_name"></param>
+    public void UpdateSellRegionName(int _name) {
         
         string _regionStr = regionDropdownA.options[_name].text;
         
@@ -230,18 +247,7 @@ public class GUIMarketBrowser : MonoBehaviour {
             return;
         }
 
-        StartCoroutine(PerformRequest());
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="_mode"></param>
-    public void UpdatePurchaseMode(int _mode) {
-
-        _purchaseMode = (PurchaseMode)_mode;
-
-        StartCoroutine(PerformRequest());
+        StartCoroutine(DoRequestSellOrders());
     }
 
     /// <summary>
@@ -276,8 +282,14 @@ public class GUIMarketBrowser : MonoBehaviour {
             }
         }
 
+        guiOrderInfo.UpdateMargins(ref currentBuyOrder, ref currentSellOrder, _purchaseVolume);
+    }
 
-        guiOrderInfo.UpdateMargins(ref currentBuyOrder, ref currentSellOrder);
+    public void UpdateVolume(string _newVol) {
+
+        _purchaseVolume = Int32.Parse(_newVol);
+
+        guiOrderInfo.UpdateMargins(ref currentBuyOrder, ref currentSellOrder, _purchaseVolume);
     }
 
     /// <summary>
@@ -311,5 +323,28 @@ public class GUIMarketBrowser : MonoBehaviour {
         return sign + span.Days.ToString("00") + "d " +
                span.Hours.ToString("00") + "h" +
                span.Minutes.ToString("00") + "m";
+    }
+
+    public void SwapRegionButtonPressed() {
+
+        int _currentSellRegion = regionDropdownA.value;
+        int _currentBuyRegion = regionDropdownB.value;
+
+        regionDropdownB.value = _currentSellRegion;
+        regionDropdownA.value = _currentBuyRegion;
+
+        //UpdateSellRegionName(_currentBuyRegion);
+        //UpdateBuyRegionName(_currentSellRegion);
+
+        //regionDropdownB.value = _currentSellRegion;
+        //regionDropdownA.value = _currentBuyRegion;
+    }
+
+    public void AddToFavs() {
+
+        if (itemInputField.text != "") {
+
+            Debug.Log(itemInputField.text);
+        }
     }
 }

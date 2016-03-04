@@ -26,9 +26,10 @@ public class GUIRoutePlanner : MonoBehaviour {
 
     public AccessTokenData accessTokenData;
 
-    Color _testColor;
-    float _pow = 400000000000000;
+    private Color _systemColor;
+    private float _pow = 400000000000000;
 
+    //
     public void OnEnable() {
 
         if (accessTokenData.IsValid()) {
@@ -62,9 +63,7 @@ public class GUIRoutePlanner : MonoBehaviour {
             _regionButton.regionID = _items[i][0].ToString();
             _regionButton.regionName = _items[i][1].ToString();
             _regionButton.regionLabel.text = _items[i][1].ToString();
-
         }
-
 	}
 	
 	// Update is called once per frame
@@ -82,68 +81,73 @@ public class GUIRoutePlanner : MonoBehaviour {
             _zoomTarget.localScale += Vector3.one * 0.2f;
             _zoomTarget.localScale = Vector3.ClampMagnitude(_zoomTarget.localScale, 15);
 
-            foreach (Transform _transform in _regionButtons) {
-                _transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
-            }
-
-            foreach (Transform _transform in _solarSystemButtons) {
-                _transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
-            }
-
-            UpdatePivot();
+            UpdateButtonScales();
         }
 
         if (Input.GetAxis("Mouse ScrollWheel") < 0) {
 
             _zoomTarget.localScale -= Vector3.one * 0.08f;
 
-            foreach (Transform _transform in _regionButtons) {
-                _transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
-            }
-
-            foreach (Transform _transform in _solarSystemButtons) {
-                _transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
-            }
+            UpdateButtonScales();
 
             if (_zoomTarget.localScale.x <= 0.5f) {
                 _zoomTarget.localScale = Vector3.one * 0.5f;
             }
-
-            UpdatePivot();
-        } 
-
-        
+        }         
 	}
 
-    private void UpdatePivot() {
+    private void UpdateButtonScales() { 
+    
+        foreach (Transform _transform in _regionButtons) {
+            _transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
+        }
 
-        Debug.Log(((RectTransform)_zoomTarget).anchoredPosition);
-
-        //((RectTransform)_zoomTarget).pivot = new Vector2(Mathf.InverseLerp(0, 2500, _zoomTarget.position.x), Mathf.InverseLerp(0, 2500, _zoomTarget.position.y));
-
+        foreach (Transform _transform in _solarSystemButtons) {
+            _transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
+        }
     }
 
-    //public void UpdatePivot() { 
-    
-    //}
-
-    public void RegionButtonPressed(string _id, bool _show) {     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_id"></param>
+    /// <param name="_show"></param>
+    /// <param name="_parent"></param>
+    public void RegionButtonPressed(string _id, bool _show, Transform _parent) {     
 
         // Query all solar systems in _id
 
+        GUIRegionButton _button = _parent.GetComponent<GUIRegionButton>();
+
         if (_show) {
-            StartCoroutine(DoRequestConstellations(_id));
-        }
-        else { 
-            
-        }
-        
 
+            if (_button.isPopulated) {
+
+                for (int i = 0; i < _button.solarsystems.Count; i++) {
+
+                    _button.solarsystems[i].gameObject.SetActive(true);
+                }
+            }
+            else {
+                StartCoroutine(DoRequestConstellations(_id, _parent));
+            }
+        }
+        else {
+
+            for (int i = 0; i < _button.solarsystems.Count; i++) {
+
+                _button.solarsystems[i].gameObject.SetActive(false);
+            }
+        }
     }
-        
-    private IEnumerator DoRequestConstellations(string _regionID) {
-
-        
+       
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_regionID"></param>
+    /// <param name="_parent"></param>
+    /// <returns></returns>
+    private IEnumerator DoRequestConstellations(string _regionID, Transform _parent) {
 
         WWW _www = new WWW("https://public-crest.eveonline.com/regions/" + _regionID + "/");
 
@@ -159,7 +163,7 @@ public class GUIRoutePlanner : MonoBehaviour {
             List<List<object>> _items = new List<List<object>>();
             _items = DatabaseProvider.GetSolarSystems(_region.constellations[i].id_str);
 
-            _testColor = Color.HSVToRGB(UnityEngine.Random.Range(0f, 1f), 1, 1);
+            _systemColor = Color.HSVToRGB(UnityEngine.Random.Range(0f, 1f), 1, 1);
 
             for (int j = 0; j < _items.Count; j++) {
 
@@ -169,52 +173,21 @@ public class GUIRoutePlanner : MonoBehaviour {
 
                 _obj.transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
                 _obj.transform.SetParent(regionMapContent.transform, false);
+
+                _parent.GetComponent<GUIRegionButton>().solarsystems.Add(_obj.transform);
+
                 _regionButtons.Add(_obj.transform);
 
                 GUIRegionButton _regionButton = _obj.GetComponentInChildren<GUIRegionButton>();
-                _obj.GetComponent<Image>().color = _testColor;
+                _obj.GetComponent<Image>().color = _systemColor;
                 //_regionButton.regionID = _items[i][0].ToString();
                 //_regionButton.regionName = _items[i][1].ToString();
                 _regionButton.regionLabel.text = _items[j][1].ToString();
 
             }
-
-            //_www = new WWW(_region.constellations[i].href);
-
-            //while (!_www.isDone) {
-            //    yield return null;
-            //}
-
-            //Constellation _constellation = new Constellation();
-            //_constellation = JsonUtility.FromJson<Constellation>(_www.text);
-            
-            //for (int j = 0; j < _constellation.systems.Count; j++) {
-
-                //Debug.Log(_constellation.systems[j].id);
-
-                //_www = new WWW(_constellation.systems[j].href);
-
-                //while (!_www.isDone) {
-                //    yield return null;
-                //}
-
-                //SolarSystem _solarSystem = new SolarSystem();
-                //_solarSystem = JsonUtility.FromJson<SolarSystem>(_www.text);
-
-                //GameObject _obj = Instantiate(imagePrefab, new Vector3((float)_solarSystem.position.x / 200000000000000, (float)_solarSystem.position.z / 200000000000000, (float)_solarSystem.position.y / 200000000000000), Quaternion.identity) as GameObject;
-                //_obj.transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
-
-                //_solarSystemButtons.Add(_obj.transform);
-
-                //_obj.transform.SetParent(constellationMapContent.transform, false);
-                //_obj.GetComponent<Image>().color = _testColor;
-                //GUIRegionButton _regionButton = _obj.GetComponentInChildren<GUIRegionButton>();
-                //_regionButton.regionLabel.text = _solarSystem.name;
-
-
-
-           // }
         }
+
+        _parent.GetComponent<GUIRegionButton>().isPopulated = true;
     }
 
     private IEnumerator DoRequestCharacterLocation() {
@@ -255,5 +228,18 @@ public class GUIRoutePlanner : MonoBehaviour {
                 }
             }
         }
-    } 
+    }
+
+    public void ResetZoom() {
+
+        _zoomTarget.transform.localScale = Vector3.one;
+
+        UpdateButtonScales();
+
+    }
+
+    public void CloseAllRegions() { 
+    
+
+    }
 }

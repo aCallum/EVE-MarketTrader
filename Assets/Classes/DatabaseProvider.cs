@@ -101,9 +101,7 @@ public static class DatabaseProvider {
     public static int GetItemID(string _itemName) {
 
         List<List<object>> _values = DBQuery("SELECT TYPEID FROM Types WHERE TYPENAME = '" + _itemName + "'");
-
-        Debug.Log(_values.Count);
-
+        
         if (_values.Count <= 0) {
             Debug.Log("NONE FOUND");
             return -1;

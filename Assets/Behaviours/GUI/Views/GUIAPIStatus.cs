@@ -76,6 +76,8 @@ public class GUIAPIStatus : MonoBehaviour {
             yield return null;            
         }
 
+        Debug.LogWarning(_www.text);
+
         CharBasic _charBasic = new CharBasic();
         _charBasic = JsonUtility.FromJson<CharBasic>(_www.text);
 

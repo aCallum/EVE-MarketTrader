@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 using System.Collections;
+using System.Collections.Generic;
 
 public class GUIRegionButton : MonoBehaviour, IPointerUpHandler {
 
@@ -11,7 +12,10 @@ public class GUIRegionButton : MonoBehaviour, IPointerUpHandler {
 
     public Text regionLabel;
 
+    public List<Transform> solarsystems = new List<Transform>();
+
     public bool isVisible = false;
+    public bool isPopulated = false;
 
 	// Use this for initialization
 	void Start () {
@@ -27,6 +31,6 @@ public class GUIRegionButton : MonoBehaviour, IPointerUpHandler {
 
         isVisible = !isVisible;
 
-        GetComponentInParent<GUIRoutePlanner>().RegionButtonPressed(regionID, isVisible);        
+        GetComponentInParent<GUIRoutePlanner>().RegionButtonPressed(regionID, isVisible, this.transform);        
     }
 }

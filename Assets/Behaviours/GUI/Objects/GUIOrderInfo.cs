@@ -28,7 +28,7 @@ public class GUIOrderInfo : MonoBehaviour {
 	
 	}
 
-    public void UpdateMargins(ref OrderEntry _buy, ref OrderEntry _sell) {
+    public void UpdateMargins(ref OrderEntry _buy, ref OrderEntry _sell, int _volume) {
 
         if (_buy == null || _sell == null) {
 
@@ -41,7 +41,7 @@ public class GUIOrderInfo : MonoBehaviour {
 
 #region BUY COST
 
-        int _X = int.Parse(desiredVolume.text);
+        int _X = _volume;
         double _U = _sell.price;
         double _buyValue = _X * _U;        
 
@@ -62,19 +62,19 @@ public class GUIOrderInfo : MonoBehaviour {
 
 #endregion
 
-        double _B = CalculateSalesTax(_buyValue) + CalculateSalesTax(_sellValue);
+        double _B = CalculateSalesTax(_sellValue);
 
         double _grossMargin = _buyCost;
 
         double _tax = _B;
         //double _netMargin = _totalSellCost;
 
-        grossMargin.text = _grossMargin.ToString("F2");
-        tax.text = "Total Tax: " + _tax.ToString("F2");
-        netMargin.text = _netMargin.ToString("F2");
+        grossMargin.text = "<color=red>-" + _grossMargin.ToString("N") + "</color> ISK";
+        tax.text = "Tax: " + _tax.ToString("N") + " ISK";
+        netMargin.text = (_netMargin > 0) ? "<color=green>" + _netMargin.ToString("N") + "</color> ISK" : "<color=red>" + _netMargin.ToString("F2") + "</color> ISK";
     }
     
     private double CalculateSalesTax(double _value) {
-        return 0.015f * _value;
+        return (float.Parse(salesTax.text) / 100) * _value;
     }
 }

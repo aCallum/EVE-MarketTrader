@@ -10,6 +10,7 @@ public class GUINavigation : MonoBehaviour {
     public GUIGroupSearch guiGroupSearch;
     public GUIAPIStatus guiAPIStatus;
     public GUIRoutePlanner guiRoutePlanner;
+    public GUIFavouritesView guiFavouritesView;
 
     public Image spiStatusImage;
 
@@ -67,11 +68,22 @@ public class GUINavigation : MonoBehaviour {
     /// <summary>
     /// 
     /// </summary>
+    public void FavouritesButtonPressed() {
+
+        DisableAllViews();
+
+        guiFavouritesView.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     private void DisableAllViews() {
 
         guiMarketBrowser.gameObject.SetActive(false);
         guiGroupSearch.gameObject.SetActive(false);
         guiAPIStatus.gameObject.SetActive(false);
         guiRoutePlanner.gameObject.SetActive(false);
+        guiFavouritesView.gameObject.SetActive(false);
     }
 }
