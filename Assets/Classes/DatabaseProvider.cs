@@ -127,6 +127,13 @@ public static class DatabaseProvider {
 
         return _values;
     }
+    public static List<List<object>> GetRegionNameFromID(string _id) {
+
+        List<List<object>> _values = DBQuery("SELECT REGIONNAME FROM Regions WHERE REGIONID ='" + _id + "'");
+
+        return _values;
+    }
+
 
     public static List<List<object>> GetSolarSystems(string _constID) {
 

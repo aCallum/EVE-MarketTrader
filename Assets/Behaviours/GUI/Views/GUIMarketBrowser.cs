@@ -65,8 +65,8 @@ public class GUIMarketBrowser : MonoBehaviour {
         regionDropdownA.options = DatabaseProvider.GetRegionNames();
         regionDropdownB.options = regionDropdownA.options;
 
-        UpdateBuyRegionName(1);
-        UpdateSellRegionName(1);
+        UpdateBuyRegionName(0);
+        UpdateSellRegionName(0);
     }
 
 	// Use this for initialization

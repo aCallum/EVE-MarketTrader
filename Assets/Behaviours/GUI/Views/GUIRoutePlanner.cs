@@ -47,6 +47,8 @@ public class GUIRoutePlanner : MonoBehaviour {
         if (accessTokenData.IsValid()) {
             StartCoroutine(DoRequestCharacterLocation());
         }
+
+        
     }
 
 	// Use this for initialization
@@ -71,7 +73,7 @@ public class GUIRoutePlanner : MonoBehaviour {
             _regionButton.regionLabel.text = _items[i][1].ToString();
         }
 
-        SetDestinationLabels();
+        
 	}
 	
 	// Update is called once per frame
@@ -233,25 +235,31 @@ public class GUIRoutePlanner : MonoBehaviour {
             CharacterLocation _location = new CharacterLocation();
             _location = JsonUtility.FromJson<CharacterLocation>(_www.text);
 
-            Debug.Log("Pilot is in: " + _location.solarSystem.name);
-
             charLocSolarSystem.text = _location.solarSystem.name;
 
+            Debug.Log("Pilot is in: " + _location.solarSystem.name);
+
             int _regionID = Int32.Parse(DatabaseProvider.GetRegionIDFromSolarSystem(_location.solarSystem.name)[0][0].ToString());
+            string _regionName = DatabaseProvider.GetRegionNameFromID(_regionID.ToString())[0][0].ToString();
+
+            
+            charLocRegion.text = _regionName;
+            
             //string _regionName = DatabaseProvider.GetRegionFromSolarSystem(_location.solarSystem.name)[0][1].ToString();
 
             //Debug.Log("Pilot is in: " + _regionID);
 
-            foreach (Transform _button in _solarSystemButtons) {
+            foreach (Transform _button in _regionButtons) {
 
                 if (_button.GetComponent<GUIRegionButton>().regionID == _regionID.ToString()) {
 
                     _button.GetComponent<Image>().color = Color.cyan;
 
-                    charLocSolarSystem.text = _button.GetComponent<GUIRegionButton>().regionName;
                 }
             }
         }
+
+        SetDestinationLabels();
     }
 
     public void ResetZoom() {
@@ -268,9 +276,11 @@ public class GUIRoutePlanner : MonoBehaviour {
     }
 
     public Image testLine;
+    public Image testLine2;
 
     Transform _A;
     Transform _B;
+    Transform _C;
 
     public void SetDestinationLabels() {
 
@@ -292,13 +302,27 @@ public class GUIRoutePlanner : MonoBehaviour {
                 _B = _button;
                 _button.GetComponent<Image>().color = Color.red;
             }
-        }
+            
+            if (_button.GetComponent<GUIRegionButton>().regionName == charLocRegion.text) {
 
+                _C = _button;
+                _button.GetComponent<Image>().color = Color.cyan;
+            }
+        }
+        
         float _distance = Vector3.Distance(_B.position, _A.position);
         Debug.Log(_B.position);
         testLine.rectTransform.sizeDelta = new Vector2(_distance * 1.9f, 10);
         testLine.rectTransform.position = (_A.position + _B.position) / 2;
         testLine.rectTransform.rotation = Quaternion.Euler(new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2((_A.position - _B.position).y, (_A.position - _B.position).x)));
+
+
+        if (_C != null) {
+            _distance = Vector3.Distance(_C.position, _A.position);
+            testLine2.rectTransform.sizeDelta = new Vector2(_distance * 1.9f, 10);
+            testLine2.rectTransform.position = (_A.position + _C.position) / 2;
+            testLine2.rectTransform.rotation = Quaternion.Euler(new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2((_A.position - _C.position).y, (_A.position - _C.position).x)));
+        }       
 
     }
 
@@ -326,7 +350,11 @@ public class GUIRoutePlanner : MonoBehaviour {
 
         _waypointA.solarSystem = new TargetSystem();
 
+        Debug.Log(guiMarketBrowser.currentSellOrder.location.id_str);
+
         int _idA = Int32.Parse(DatabaseProvider.GetSolarSystemIDFromStationID(guiMarketBrowser.currentSellOrder.location.id_str)[0][0].ToString());
+
+        Debug.Log(_idA);
 
         _waypointA.solarSystem.id = _idA;
         _waypointA.solarSystem.href = "http://crest.regner.dev/solarsystems/" + _idA + "/";
