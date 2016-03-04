@@ -197,6 +197,11 @@ public class GUIMarketBrowser : MonoBehaviour {
         }
     }
 
+    public void UpdateTextColor() {
+
+        itemInputField.textComponent.color = Color.white;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -210,11 +215,16 @@ public class GUIMarketBrowser : MonoBehaviour {
         //_itemID = // cast from DB..
 
         _itemID = DatabaseProvider.GetItemID(_itemNameStr);
-
+        
         if (_itemID == -1) {
-            itemInputField.text = "<color=red>" + itemInputField.text + "</color>";
+            itemInputField.textComponent.color = Color.red;
             return;
         }
+        else {
+            itemInputField.textComponent.color = Color.white;
+        }
+
+        //itemInputField.text = itemInputField.text;
 
         StartCoroutine(DoRequestSellOrders());
         StartCoroutine(DoRequestBuyOrders());
