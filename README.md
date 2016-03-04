@@ -1,13 +1,12 @@
 # EVE-MarketTrader
 Entry for The EVE Online API Challenge
 
-EVE-MarketTrader is a standalone application that helps players of EVE Online make use of inter region trade routes. The desired waypoint route can then be sent directly to the client for directions to the buy/sell locations. Currently supported feartures:
+EVE-MarketTrader is a standalone application that helps players of EVE Online make use of inter regional trade routes. The desired waypoint route can then be sent directly to the client for directions to the buy/sell locations. Currently supported feartures:
 
-  - Bi-region market scanning
+  - Bi-regional market scanning
   - Buy/Sell location Waypoint plotting (CREST API currently only supports solar systems, MarketTrader will work best when stations can be set using this endpoint)
   - Item name search
   - Favourite item list search
-  
 
 MarketTrader is prototyped in Unity (why? because that's what I know) and makes use of:
 
@@ -40,11 +39,13 @@ Created for [The EVE Online API Challenge].
 ### Release
 
 ### Structure
-Written as a non-game application.
+Written in Unity as a non-game application.
 
-* GUIMarketView - search for specific items in regions, sort by price
-* GUIAPIStatus - shows status about currently authed pilot (and token expiry info)
-* GUIRoutePlanner - 
+* Market Browser - search for specific items in regions, sort by price, calculates buy/sell margins
+* API Status - shows status about currently authed pilot (and token expiry info)
+* Route Planner - shows current player location and shows plot of planned trade route (limited)
+* Favourites - a list of stored item types that can be looked up quickly
+* Group Search - scan an entire market group and aggregate best buy/sell margins of specific types (broken)
 
 ### Documentation
 Nope.
