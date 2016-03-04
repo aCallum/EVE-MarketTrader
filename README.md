@@ -19,6 +19,9 @@ MarketTrader is prototyped in Unity (why? because that's what I know) and makes 
 Standalone Windows application. OSX planned.
 Created for [The EVE Online API Challenge].
 
+### Release
+[Build v0.1.2-alpha]
+
 ### Authenticated CREST Usage
 
  - **characterLocationRead**
@@ -35,9 +38,6 @@ Created for [The EVE Online API Challenge].
   - 0.0.3 - market filtering
   - 0.0.5 - authed CREST data
   - 0.1.0 - regions/solar systems
-
-### Release
-[Build v0.1.1-alpha]
 
 ### Structure
 Written in Unity as a non-game application.
@@ -74,4 +74,4 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [The EVE Online API Challenge]:<http://community.eveonline.com/news/dev-blogs/the-eve-online-api-challenge-1/>
-[Build v0.1.1-alpha]:<https://github.com/aCallum/EVE-MarketTrader/releases/tag/v0.1.1-alpha>
+[Build v0.1.2-alpha]:<https://github.com/aCallum/EVE-MarketTrader/releases/tag/v0.1.2-alpha>
