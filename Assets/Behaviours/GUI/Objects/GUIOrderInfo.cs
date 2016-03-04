@@ -8,7 +8,10 @@ using EVEMarketTrader;
 
 public class GUIOrderInfo : MonoBehaviour {
 
+    public GUIMarketBrowser guiMarketBrowser;
+
     public InputField desiredVolume;
+    public InputField cargoCapacity;
     public InputField salesTax;
 
     public Text fromInfo;
@@ -17,6 +20,8 @@ public class GUIOrderInfo : MonoBehaviour {
     public Text grossMargin;
     public Text tax;
     public Text netMargin;
+
+    public bool autoUpdateQuantity;
 
 	// Use this for initialization
 	void Start () {
@@ -72,9 +77,43 @@ public class GUIOrderInfo : MonoBehaviour {
         grossMargin.text = "<color=red>-" + _grossMargin.ToString("N") + "</color> ISK";
         tax.text = "Tax: " + _tax.ToString("N") + " ISK";
         netMargin.text = (_netMargin > 0) ? "<color=green>" + _netMargin.ToString("N") + "</color> ISK" : "<color=red>" + _netMargin.ToString("F2") + "</color> ISK";
+
+        if (autoUpdateQuantity) {
+            CalculateMaxQuantity();
+        }
     }
     
     private double CalculateSalesTax(double _value) {
         return (float.Parse(salesTax.text) / 100) * _value;
+    }
+
+    public void UpdateAutoUpdate(bool _val) {
+
+        autoUpdateQuantity = _val;
+    }
+
+    public void CalculateMaxQuantity() {     
+        
+        StartCoroutine(DoRequestItemType());
+    }
+
+    private IEnumerator DoRequestItemType() { 
+    
+        WWW _www = new WWW(guiMarketBrowser.currentSellOrder.type.href);
+
+        while (!_www.isDone) {
+            yield return null;  
+        }
+
+        ItemTypeD _item = new ItemTypeD();
+        _item = JsonUtility.FromJson<ItemTypeD>(_www.text);
+
+        float _currentItemVolume = (float)_item.volume;
+        float _desiredVolume = Mathf.Floor(float.Parse(cargoCapacity.text) / _currentItemVolume);
+
+        _desiredVolume = (_desiredVolume > guiMarketBrowser.currentSellOrder.volume) ? guiMarketBrowser.currentSellOrder.volume : _desiredVolume;
+
+        desiredVolume.text = _desiredVolume.ToString();
+        guiMarketBrowser.UpdateVolume(_desiredVolume.ToString());
     }
 }

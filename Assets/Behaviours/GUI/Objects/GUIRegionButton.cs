@@ -5,6 +5,9 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// 
+/// </summary>
 public class GUIRegionButton : MonoBehaviour, IPointerUpHandler {
 
     public string regionID;
@@ -27,10 +30,16 @@ public class GUIRegionButton : MonoBehaviour, IPointerUpHandler {
 	
 	}
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerUp(PointerEventData eventData) {
-
-        isVisible = !isVisible;
-
-        GetComponentInParent<GUIRoutePlanner>().RegionButtonPressed(regionID, isVisible, this.transform);        
+        
+        if (eventData.button == PointerEventData.InputButton.Left && !eventData.dragging) {
+            
+            isVisible = !isVisible;
+            GetComponentInParent<GUIRoutePlanner>().RegionButtonPressed(regionID, isVisible, this.transform);   
+        }             
     }
 }

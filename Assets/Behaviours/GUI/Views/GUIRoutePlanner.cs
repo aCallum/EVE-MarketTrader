@@ -9,6 +9,9 @@ using EVEMarketTrader;
 
 public class GUIRoutePlanner : MonoBehaviour {
 
+    public GUINavigation guiNavigation;
+    public GUIMarketBrowser guiMarketBrowser;
+
     public Transform regionMapScrollView;
     public Transform constellationMapScrollView;
 
@@ -26,6 +29,15 @@ public class GUIRoutePlanner : MonoBehaviour {
 
     public AccessTokenData accessTokenData;
 
+    public InputField charLocRegion;
+    public InputField charLocSolarSystem;
+    public InputField charLocStation;
+
+    public InputField buyLocation;
+    public InputField sellLocation;
+
+    public Text errorDetails;
+
     private Color _systemColor;
     private float _pow = 400000000000000;
 
@@ -33,18 +45,12 @@ public class GUIRoutePlanner : MonoBehaviour {
     public void OnEnable() {
 
         if (accessTokenData.IsValid()) {
-
-            Debug.Log("Token valid");
-
             StartCoroutine(DoRequestCharacterLocation());
-
         }
     }
 
 	// Use this for initialization
 	void Start () {
-
-        Debug.Log(_pow);
 
         _zoomTarget = regionMapContent;
 
@@ -53,7 +59,7 @@ public class GUIRoutePlanner : MonoBehaviour {
         
         for (int i = 0; i < _items.Count; i++) {
 
-            GameObject _obj = Instantiate(imagePrefab, new Vector3((float)_items[i][2] / _pow, (float)_items[i][4] / _pow, (float)_items[i][3] / _pow), Quaternion.identity) as GameObject;
+            GameObject _obj = Instantiate(imagePrefab, new Vector3((float)_items[i][2] / _pow, (float)_items[i][4] / _pow, -10), Quaternion.identity) as GameObject;
 
             _obj.transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
             _obj.transform.SetParent(regionMapContent.transform, false);
@@ -99,7 +105,7 @@ public class GUIRoutePlanner : MonoBehaviour {
     private void UpdateButtonScales() { 
     
         foreach (Transform _transform in _regionButtons) {
-            _transform.localScale = (Vector3.one / _zoomTarget.localScale.x);
+            _transform.localScale = (Vector3.one / _zoomTarget.localScale.x) * 1.5f;
         }
 
         foreach (Transform _transform in _solarSystemButtons) {
@@ -167,7 +173,7 @@ public class GUIRoutePlanner : MonoBehaviour {
 
             for (int j = 0; j < _items.Count; j++) {
 
-                GameObject _obj = Instantiate(imagePrefab, new Vector3((float)_items[j][4] / _pow, (float)_items[j][6] / _pow, (float)_items[j][5] / _pow), Quaternion.identity) as GameObject;
+                GameObject _obj = Instantiate(imagePrefab, new Vector3((float)_items[j][4] / _pow, (float)_items[j][6] / _pow, 0), Quaternion.identity) as GameObject;
 
                 _obj.hideFlags = HideFlags.HideInHierarchy;
 
@@ -176,7 +182,7 @@ public class GUIRoutePlanner : MonoBehaviour {
 
                 _parent.GetComponent<GUIRegionButton>().solarsystems.Add(_obj.transform);
 
-                _regionButtons.Add(_obj.transform);
+                _solarSystemButtons.Add(_obj.transform);
 
                 GUIRegionButton _regionButton = _obj.GetComponentInChildren<GUIRegionButton>();
                 _obj.GetComponent<Image>().color = _systemColor;
@@ -200,31 +206,47 @@ public class GUIRoutePlanner : MonoBehaviour {
 
         //_data = System.Text.Encoding.UTF8.GetBytes("");
 
-        Debug.Log(PlayerPrefs.GetInt("character_id"));
+        Debug.Log("CharID: " + PlayerPrefs.GetInt("character_id"));
 
         WWW _www = new WWW("https://crest-tq.eveonline.com/characters/" + PlayerPrefs.GetInt("character_id") + "/location/", null, _headers);
+
+        Debug.Log(_www.url);
 
         while (!_www.isDone) {
             yield return null;
         }
+
+        if (_www.error != "") {
+            errorDetails.text = _www.error;
+        }
+
+        if (_www.text.Contains("error")) {
+            errorDetails.text +=  " : " + _www.text;
+        }
         
-        if (_www.text != "" && _www.text != "{}") {
+        if (_www.text != "" && _www.text != "{}" && !_www.text.Contains("error")) {
+
+            Debug.Log(_www.text);
 
             CharacterLocation _location = new CharacterLocation();
             _location = JsonUtility.FromJson<CharacterLocation>(_www.text);
 
             Debug.Log("Pilot is in: " + _location.solarSystem.name);
 
+            charLocSolarSystem.text = _location.solarSystem.name;
+
             int _regionID = Int32.Parse(DatabaseProvider.GetRegionIDFromSolarSystem(_location.solarSystem.name)[0][0].ToString());
             //string _regionName = DatabaseProvider.GetRegionFromSolarSystem(_location.solarSystem.name)[0][1].ToString();
 
             //Debug.Log("Pilot is in: " + _regionID);
 
-            foreach (Transform _button in _regionButtons) {
+            foreach (Transform _button in _solarSystemButtons) {
 
                 if (_button.GetComponent<GUIRegionButton>().regionID == _regionID.ToString()) {
 
                     _button.GetComponent<Image>().color = Color.cyan;
+
+                    charLocSolarSystem.text = _button.GetComponent<GUIRegionButton>().regionName;
                 }
             }
         }
@@ -241,5 +263,111 @@ public class GUIRoutePlanner : MonoBehaviour {
     public void CloseAllRegions() { 
     
 
+    }
+
+    public Image testLine;
+
+    Transform _A;
+    Transform _B;
+
+    public void SetDestinationLabels() {
+
+        buyLocation.text = guiMarketBrowser.currentSellOrder.location.name;
+        sellLocation.text = guiMarketBrowser.currentBuyOrder.location.name;
+
+        guiNavigation.RoutePlannerButtonPressed();
+
+        foreach (Transform _button in _regionButtons) {
+
+            if (_button.GetComponent<GUIRegionButton>().regionName == guiMarketBrowser.regionDropdownA.options[guiMarketBrowser.regionDropdownA.value].text) {
+
+                _A = _button;
+                _button.GetComponent<Image>().color = Color.green;
+            }
+
+            if (_button.GetComponent<GUIRegionButton>().regionName == guiMarketBrowser.regionDropdownB.options[guiMarketBrowser.regionDropdownB.value].text) {
+
+                _B = _button;
+                _button.GetComponent<Image>().color = Color.red;
+            }
+        }
+
+        float _distance = Vector3.Distance(_B.position, _A.position);
+        Debug.Log(_B.position);
+        testLine.rectTransform.sizeDelta = new Vector2(_distance * 2, 10);
+        testLine.rectTransform.position = (_A.position + _B.position) / 2;
+        testLine.rectTransform.rotation = Quaternion.Euler(new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2((_A.position - _B.position).y, (_A.position - _B.position).x)));
+
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void SetClientWaypoints() {
+
+        if (guiMarketBrowser.currentSellOrder.id != 0 && guiMarketBrowser.currentBuyOrder.id != 0) {
+            StartCoroutine(DoSetClientWaypoints());
+        }
+        else {
+
+            errorDetails.text = "Please select a Buy and Sell order from the Market Browser.";
+        }
+
+        
+    }
+
+    private IEnumerator DoSetClientWaypoints() {
+
+        Waypoint _waypointA = new Waypoint();
+        _waypointA.clearOtherWaypoints = true;
+        _waypointA.first = false;
+
+        _waypointA.solarSystem = new TargetSystem();
+
+        int _idA = Int32.Parse(DatabaseProvider.GetSolarSystemIDFromStationID(guiMarketBrowser.currentSellOrder.location.id_str)[0][0].ToString());
+
+        _waypointA.solarSystem.id = _idA;
+        _waypointA.solarSystem.href = "http://crest.regner.dev/solarsystems/" + _idA + "/";
+
+        Waypoint _waypointB = new Waypoint();
+        _waypointB.clearOtherWaypoints = false;
+        _waypointB.first = false;
+
+        _waypointB.solarSystem = new TargetSystem();
+
+        int _idB = Int32.Parse(DatabaseProvider.GetSolarSystemIDFromStationID(guiMarketBrowser.currentBuyOrder.location.id_str)[0][0].ToString());
+
+        _waypointB.solarSystem.id = _idB;
+        _waypointB.solarSystem.href = "http://crest.regner.dev/solarsystems/" + _idB + "/";
+
+        Dictionary<string, string> _headers = new Dictionary<string, string>();
+
+        _headers.Add("Authorization", "Bearer " + accessTokenData.access_token);
+        _headers.Add("Host", "login.eveonline.com");
+
+        byte[] _dataA = System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(_waypointA));
+        byte[] _dataB = System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(_waypointB));
+
+        WWW _www = new WWW("https://login.eveonline.com/oauth/token", _dataA, _headers);
+
+        while (!_www.isDone) {
+            yield return null;
+        }
+
+        if (_www.error != "") {
+            Debug.Log(_www.error);
+            errorDetails.text = _www.error + " : " + _www.text;
+        }
+
+        _www = new WWW("https://login.eveonline.com/oauth/token", _dataB, _headers);
+
+        while (!_www.isDone) {
+            yield return null;
+        }
+
+        if (_www.error != "") {
+            Debug.Log(_www.error);
+            errorDetails.text = _www.error + " : " + _www.text;
+        }
     }
 }

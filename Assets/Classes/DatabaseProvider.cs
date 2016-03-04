@@ -141,4 +141,11 @@ public static class DatabaseProvider {
 
         return _values;
     }
+
+    public static List<List<object>> GetSolarSystemIDFromStationID(string _stationID) {
+
+        List<List<object>> _values = DBQuery("SELECT SOLARSYSTEMID FROM Stations WHERE STATIONID ='" + _stationID + "'");
+
+        return _values;
+    } 
 }

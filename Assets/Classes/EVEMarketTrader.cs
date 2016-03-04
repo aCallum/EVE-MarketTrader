@@ -157,6 +157,17 @@ namespace EVEMarketTrader {
         public SolarSystemLocation solarSystem;
     }
 
+    public class TargetSystem {
+        public string href;
+        public int id;
+    }
+
+    public class Waypoint {
+        public TargetSystem solarSystem;
+        public bool first;
+        public bool clearOtherWaypoints;
+    }
+
     #endregion
 
     #region Oders
@@ -211,6 +222,35 @@ namespace EVEMarketTrader {
         public int id;
         public string name;
     }
+
+    #endregion
+
+    #region Type
+
+    [System.Serializable]
+    public class Dogma {
+
+    }
+
+    [System.Serializable]
+    public class ItemTypeD {
+
+        public double capacity;
+        public string description;
+        public string portionSize_str;
+        public int iconID;
+        public int portionSize;
+        public string iconID_str;
+        public double volume;
+        public Dogma dogma;
+        public double radius;
+        public string id_str;
+        public bool published;
+        public double mass;
+        public int id;
+        public string name;
+    }
+
 
     #endregion
 

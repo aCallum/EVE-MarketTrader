@@ -32,6 +32,10 @@ public class GUIMarketBrowser : MonoBehaviour {
     private int _regionIDA;
     private int _regionIDB;
 
+
+    public int RegionIDA { get { return _regionIDA; } }
+    public int RegionIDB { get { return _regionIDB; } }
+
     private PurchaseMode _purchaseMode;
 
 	private string _buyURL = "";
@@ -289,7 +293,7 @@ public class GUIMarketBrowser : MonoBehaviour {
 
         _purchaseVolume = Int32.Parse(_newVol);
 
-        guiOrderInfo.UpdateMargins(ref currentBuyOrder, ref currentSellOrder, _purchaseVolume);
+        //guiOrderInfo.UpdateMargins(ref currentBuyOrder, ref currentSellOrder, _purchaseVolume);
     }
 
     /// <summary>
